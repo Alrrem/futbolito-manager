@@ -1,0 +1,58 @@
+﻿@model FutbolitoManager.Models.JugadorFormModel
+@{
+    ViewBag.Title = "Agregar jugador";
+    var equipoId = ViewBag.EquipoId ?? 0;
+}
+
+<div style="padding: 30px; max-width: 600px; margin: auto; font-family: Arial;">
+    <h2 style="text-align: center; color: #00796b;">Agregar jugador al equipo</h2>
+
+    <!-- resumen de errores -->
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <form asp-action="GuardarJugador" method="post">
+        <input type="hidden" asp-for="EquipoId" value="@equipoId" />
+
+        <div class="mb-2">
+            <label asp-for="Nombre"></label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Rut"></label>
+            <input asp-for="Rut" class="form-control" placeholder="12345678-9" />
+            <span asp-validation-for="Rut" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Edad"></label>
+            <input asp-for="Edad" type="number" class="form-control" />
+            <span asp-validation-for="Edad" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Posicion"></label>
+            <input asp-for="Posicion" class="form-control" />
+            <span asp-validation-for="Posicion" class="text-danger"></span>
+        </div>
+
+
+
+        <button type="submit" class="btn btn-success w-100">Guardar jugador</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a asp-action="FichaEquipo" asp-route-id="@equipoId" class="btn btn-secondary">
+            ← Volver a la ficha
+        </a>
+    </div>
+
+
+
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

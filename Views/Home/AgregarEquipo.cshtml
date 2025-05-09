@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Agregar equipo";
+}
+
+<div style="padding: 30px; max-width: 600px; margin: auto; font-family: Arial;">
+    <h2 style="text-align: center; color: #00796b;">Agregar nuevo equipo</h2>
+
+    <form asp-action="GuardarEquipo" asp-controller="Home" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <label>Nombre del equipo:</label>
+        <input type="text" name="nombre" required class="form-control mb-2" />
+
+        <label>Descripción de la vestimenta:</label>
+        <input type="text" name="vestimenta" required class="form-control mb-2" />
+
+        <label>Portero - Implementación:</label>
+        <input type="text" name="portero" required class="form-control mb-2" />
+
+        <label>Nombre del Capitán o representante:</label>
+        <input type="text" name="capitan" required class="form-control mb-2" />
+
+        <label>Cantidad de jugadores en banca (7 a 10):</label>
+        <input type="number" name="jugadoresEnBanca" min="7" max="10" required class="form-control mb-2" />
+
+        <label>¿Tiene balón N°4?:</label>
+        <select name="balon" required class="form-control mb-2">
+            <option value="">Seleccione una opción</option>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+        </select>
+
+        <label>Subir logo (opcional):</label>
+        <input type="file" name="logo" class="form-control mb-3" />
+
+        <button type="submit" class="btn btn-success w-100">Guardar equipo</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a asp-action="Equipos" asp-controller="Home" class="btn btn-secondary">← Volver al listado</a>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+﻿@model List<FutbolitoManager.Models.Jugador>
+@{
+    ViewBag.Title = "Buscar jugador";
+}
+
+<h2>Buscar jugador por RUT</h2>
+<form method="get" asp-action="BuscarJugador">
+    <input type="text" name="termino" value="@ViewBag.Termino" placeholder="12345678-9" />
+    <button type="submit">Buscar</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead><tr><th>Nombre</th><th>RUT</th><th>Edad</th><th>Posición</th><th>Goles</th></tr></thead>
+        <tbody>
+            @foreach (var j in Model)
+            {
+                <tr>
+                    <td>@j.Nombre</td>
+                    <td>@j.Rut</td>
+                    <td>@j.Edad</td>
+                    <td>@j.Posicion</td>
+                    <td>@j.Goles</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (Model != null)
+{
+    <p>No se encontraron jugadores con ese RUT.</p>
+}

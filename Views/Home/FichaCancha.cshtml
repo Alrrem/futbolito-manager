@@ -1,0 +1,39 @@
+﻿@model FutbolitoManager.Models.Cancha
+@using Microsoft.AspNetCore.Http   <!-- para GetString -->
+@{
+    ViewBag.Title = "Ficha Cancha";
+    // obtenemos la sesión desde Context, no HttpContext estático
+    bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
+}
+
+<div style="padding:30px; max-width:800px; margin:auto; font-family:Arial;">
+    <h2 style="text-align:center; color:#00796b;">📍 @Model.Nombre</h2>
+
+    <div style="text-align:center; margin-bottom:20px;">
+        @if (Model.Imagen != null)
+        {
+            var b64 = Convert.ToBase64String(Model.Imagen);
+            <img src="data:image/png;base64,@b64" style="max-width:100%; border-radius:8px;" />
+        }
+        else
+        {
+            <img src="/imagenes/cancha-generico.png" style="max-width:100%; border-radius:8px;" />
+        }
+    </div>
+
+    <p><strong>Ubicación:</strong> @Model.Ubicacion</p>
+    <p><strong>Reseña:</strong></p>
+    <p style="white-space:pre-wrap; border:1px solid #ddd; padding:15px; border-radius:6px;">
+        @Model.Resena
+    </p>
+
+    <div style="text-align:center; margin-top:20px;">
+        <a asp-action="Canchas" class="btn btn-secondary">← Volver a la lista</a>
+        @if (esAdmin)
+        {
+            <a asp-action="EditarCancha" asp-route-id="@Model.Id" class="btn btn-warning ms-2">
+                ✏️ Editar cancha
+            </a>
+        }
+    </div>
+</div>

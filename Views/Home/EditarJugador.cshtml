@@ -1,0 +1,52 @@
+﻿@model FutbolitoManager.Models.Jugador
+@{
+    ViewBag.Title = "Editar Jugador";
+}
+
+<div style="padding:30px; max-width:600px; margin:auto; font-family:Arial;">
+    <h2 style="text-align:center; color:#00796b;">✏️ Editar jugador</h2>
+
+    <form asp-action="EditarJugador" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-2">
+            <label asp-for="Nombre"></label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Rut"></label>
+            <input asp-for="Rut" class="form-control" placeholder="12345678-9" />
+            <span asp-validation-for="Rut" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Edad"></label>
+            <input asp-for="Edad" type="number" class="form-control" min="10" max="12" />
+            <span asp-validation-for="Edad" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Posicion"></label>
+            <select asp-for="Posicion" class="form-control">
+                <option value="">-- Seleccione posición --</option>
+                <option value="Arquero">Arquero</option>
+                <option value="Defensa">Defensa</option>
+                <option value="Medio Campo">Medio Campo</option>
+                <option value="Delantero">Delantero</option>
+            </select>
+            <span asp-validation-for="Posicion" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-warning w-100">💾 Guardar cambios</button>
+        <a asp-action="FichaEquipo" asp-route-id="@Model.EquipoId" class="btn btn-secondary w-100 mt-2">
+            ← Volver al equipo
+        </a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

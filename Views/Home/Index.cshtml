@@ -1,0 +1,100 @@
+﻿@model List<FutbolitoManager.Models.Equipo>
+@using Microsoft.AspNetCore.Http
+@{
+    ViewBag.Title = "Inicio";
+    bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
+}
+
+<div style="width: 100%; height: 100vh;">
+    <!-- Título -->
+    <div style="text-align: center; padding-top: 20px;">
+        <h1><b>Campeonato Futbol Infantil Arica 2025</b></h1>
+    </div>
+
+    <!-- Contenedor principal -->
+    <div style="display: flex; flex-direction: row; margin-top: 40px; height: calc(100% - 100px);">
+
+        <!-- Menú lateral -->
+        <div style="width: 200px; padding-left: 40px;">
+            <form method="get" action="/Home/Equipos">
+                <button type="submit"
+                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
+                    Equipos
+                </button>
+            </form>
+
+            <form method="get" action="/Home/Canchas">
+                <button type="submit"
+                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
+                    Canchas
+                </button>
+            </form>
+
+            <form method="get" action="/Home/Estadisticas">
+                <button type="submit"
+                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
+                    Estadísticas
+                </button>
+            </form>
+
+            <form method="get" action="/Home/Fechas">
+                <button type="submit"
+                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
+                    Fechas
+                </button>
+            </form>
+
+            <form method="get" action="/Home/Reglamento">
+                <button type="submit"
+                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
+                    Reglamento
+                </button>
+            </form>
+        </div>
+
+        <!-- Área de contenido: galería de equipos o mensaje -->
+        <div style="flex-grow: 1; padding: 20px; overflow-y: auto;">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning" role="alert" style="text-align:center; margin-top:50px;">
+                    No hay equipos agregados.
+                    @if (esAdmin)
+                    {
+                        <span>Por favor <a asp-action="Equipos">agrega uno</a>.</span>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var equipo in Model)
+                    {
+                        <div class="col-6 col-sm-4 col-md-3 mb-4 text-center">
+                            <a asp-action="FichaEquipo" asp-route-id="@equipo.Id"
+                               title="@equipo.Nombre" style="text-decoration:none; color:inherit;">
+                                @if (equipo.Logo != null && equipo.Logo.Length > 0)
+                                {
+                                    var img = Convert.ToBase64String(equipo.Logo);
+                                    <img src="data:image/png;base64,@img"
+                                         style="max-width:100%; max-height:100px; object-fit:contain;" />
+                                }
+                                else
+                                {
+                                    <div style="
+                                            width:100%; height:100px;
+                                            display:flex; align-items:center; justify-content:center;
+                                            background:#f4f4f4; color:#777;
+                                                        ">
+                                        Sin logo
+                                    </div>
+                                }
+                                <p class="mt-2" style="font-weight:bold;">@equipo.Nombre</p>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+    </div>
+</div>

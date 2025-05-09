@@ -1,0 +1,82 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    var esAdmin = Context.Session.GetString("EsAdmin") == "true";
+    var adminEmail = Context.Session.GetString("AdminEmail");
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FutbolitoManager</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FutbolitoManager.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FutbolitoManager</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+
+                    <!-- BLOQUE DE LOGIN / LOGOUT Y MENSAJE -->
+                    <div class="d-flex align-items-center">
+                        @if (esAdmin && !string.IsNullOrEmpty(adminEmail))
+                        {
+                            <!-- SOLO cuando hay sesión admin -->
+                            <span class="me-2" style="font-size: 32px;">Bienvenido @adminEmail</span>
+                            <form method="post" action="/Home/Logout" class="d-inline">
+                                <button style="background: none; border: none; cursor: pointer;" title="Cerrar sesión">
+                                    <img src="/imagenes/logout.png" alt="Cerrar sesión" style="width: 32px; height: 32px;" />
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <!-- SOLO cuando no hay sesión -->
+                            <form method="get" action="/Home/Login" class="d-inline">
+                                <button style="background: none; border: none; cursor: pointer;" title="Iniciar sesión">
+                                    <img src="/imagenes/icono-login.png" alt="Login" style="width: 32px; height: 32px;" />
+                                </button>
+                            </form>
+                        }
+                    </div>
+                    <!-- FIN BLOQUE LOGIN / LOGOUT -->
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - FutbolitoManager - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

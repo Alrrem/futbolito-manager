@@ -1,0 +1,140 @@
+﻿@model FutbolitoManager.Models.Equipo
+@using Microsoft.AspNetCore.Http
+@{
+    ViewBag.Title = "Ficha del Equipo";
+    bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
+    var jugadores = ViewBag.Jugadores as List<FutbolitoManager.Models.Jugador> ?? new();
+}
+
+<div style="padding: 30px; max-width: 800px; margin: auto; font-family: Arial;">
+    <h2 style="text-align: center; color: #00796b;">
+        Ficha del equipo: @Model.Nombre
+    </h2>
+
+    @* Mensaje de importación *@
+    @if (TempData["ImportResult"] != null)
+    {
+        <div class="alert alert-info mt-3" role="alert">
+            @TempData["ImportResult"]
+        </div>
+    }
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        @if (Model.Logo != null)
+        {
+            var base64 = Convert.ToBase64String(Model.Logo);
+            <img src="data:image/png;base64,@base64" style="max-height: 250px;" />
+        }
+        else
+        {
+            <img src="/imagenes/logo-generico.png" style="max-height: 250px;" />
+        }
+    </div>
+
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Capitán:</strong> @Model.Capitan</li>
+        <li class="list-group-item"><strong>Portero:</strong> @Model.Portero</li>
+        <li class="list-group-item"><strong>Vestimenta:</strong> @Model.Vestimenta</li>
+        <li class="list-group-item"><strong>Jugadores en banca:</strong> @Model.JugadoresEnBanca</li>
+        <li class="list-group-item"><strong>Balón N°4:</strong> @Model.Balon</li>
+    </ul>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a asp-action="Equipos" class="btn btn-secondary">← Volver al listado</a>
+    </div>
+
+    @if (esAdmin)
+    {
+        <div style="text-align: center; margin-top: 10px;">
+            <a asp-action="EditarEquipo" asp-route-id="@Model.Id" class="btn btn-warning">
+                ✏️ Editar equipo
+            </a>
+        </div>
+        <div style="text-align:center; margin-top:10px;">
+            <a asp-action="AgregarJugador" asp-route-id="@Model.Id" class="btn btn-success mb-2">
+                ➕ Agregar jugador
+            </a>
+            <a asp-action="ImportarJugadores" asp-route-id="@Model.Id" class="btn btn-info mb-2">
+                ➕ Agregar Varios jugadores
+            </a>
+
+            <div class="mb-3">
+                <small class="text-muted">
+                    📄 <a href="~/plantillas/jugadores_template.xlsx" download>
+                        Descarga aquí la plantilla de Excel
+                    </a> con validación de RUT único.
+                </small>
+            </div>
+        </div>
+    }
+
+    <h3 style="margin-top: 40px; color: #00796b;">Jugadores del equipo</h3>
+    <div style="max-width: 400px; margin: 10px auto;">
+        <input id="filtroJugador" type="text"
+               placeholder="🔍 Buscar por nombre o RUT…"
+               class="form-control" />
+    </div>
+
+    @if (jugadores.Any())
+    {
+        <table id="tablaJugadores" class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nombre</th>
+                    <th>RUT</th>
+                    <th>Edad</th>
+                    <th>Posición</th>
+                    <th>Goles</th>
+                    @if (esAdmin)
+                    {
+                        <th>Acciones</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var jugador in jugadores)
+                {
+                    <tr>
+                        <td>@jugador.Nombre</td>
+                        <td>@jugador.Rut</td>
+                        <td>@jugador.Edad</td>
+                        <td>@jugador.Posicion</td>
+                        <td>@jugador.Goles</td>
+                        @if (esAdmin)
+                        {
+                            <td>
+                                <a asp-action="EditarJugador" asp-route-id="@jugador.Id" class="btn btn-primary btn-sm">✏️</a>
+                                <form asp-action="BorrarJugador" asp-route-id="@jugador.Id" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p style="text-align: center; margin-top: 20px;">
+            No hay jugadores registrados para este equipo.
+        </p>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('filtroJugador');
+            const tabla = document.getElementById('tablaJugadores');
+            if (!input || !tabla) return;
+            input.addEventListener('input', function () {
+                const term = this.value.trim().toLowerCase();
+                Array.from(tabla.tBodies[0].rows).forEach(row => {
+                    row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}

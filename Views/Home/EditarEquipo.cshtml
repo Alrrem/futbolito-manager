@@ -1,0 +1,39 @@
+﻿@model FutbolitoManager.Models.Equipo
+@{
+    ViewBag.Title = "Editar equipo";
+}
+
+<div style="padding: 30px; max-width: 600px; margin: auto; font-family: Arial;">
+    <h2 style="text-align: center; color: #00796b;">Editar equipo: @Model.Nombre</h2>
+
+    <form method="post" enctype="multipart/form-data" asp-action="ActualizarEquipo">
+        <input type="hidden" name="Id" value="@Model.Id" />
+
+        <label>Nombre del equipo:</label>
+        <input type="text" name="Nombre" value="@Model.Nombre" required class="form-control mb-2" />
+
+        <label>Vestimenta:</label>
+        <input type="text" name="Vestimenta" value="@Model.Vestimenta" required class="form-control mb-2" />
+
+        <label>Portero:</label>
+        <input type="text" name="Portero" value="@Model.Portero" required class="form-control mb-2" />
+
+        <label>Capitán:</label>
+        <input type="text" name="Capitan" value="@Model.Capitan" required class="form-control mb-2" />
+
+        <label>Jugadores en banca:</label>
+        <input type="number" name="Jugadores" value="@Model.Jugadores" required class="form-control mb-2" />
+
+        <label>¿Tiene balón N°4?</label>
+        <input type="text" name="Balon" value="@Model.Balon" required class="form-control mb-2" />
+
+        <label>Actualizar logo (opcional):</label>
+        <input type="file" name="Logo" class="form-control mb-3" />
+
+        <button type="submit" class="btn btn-success w-100">Guardar cambios</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/Home/FichaEquipo/@Model.Id" class="btn btn-secondary">← Volver a la ficha</a>
+    </div>
+</div>

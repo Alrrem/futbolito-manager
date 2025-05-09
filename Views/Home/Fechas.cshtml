@@ -1,0 +1,209 @@
+﻿@using FutbolitoManager.Models
+@{
+    ViewBag.Title = "Fechas";
+    var partidos = ViewBag.Partidos as List<Partido> ?? new();
+    var equipos = ViewBag.Equipos as List<Equipo> ?? new();
+    var canchas = ViewBag.Canchas as List<Cancha> ?? new();
+    var esAdmin = ViewBag.EsAdmin as bool? ?? false;
+}
+
+<div style="padding:30px; max-width:1200px; margin:auto; font-family:Arial;">
+    <h2 style="text-align:center; color:#00796b;">📅 Fechas de Partidos</h2>
+
+    @if (esAdmin)
+    {
+            <h4>➕ Agregar Partido</h4>
+            <form asp-action="GuardarPartido" method="post">
+            @Html.AntiForgeryToken()
+                <div class="row mb-3">
+                    <div class="col">
+                        <label>Local:</label>
+                        <select name="equipoLocalId" id="equipoLocalId" class="form-control" required>
+                            <option value="">-- Seleccione equipo --</option>
+                        @foreach (var e in equipos)
+                        {
+                                    <option value="@e.Id">@e.Nombre</option>
+                        }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label>Visitante:</label>
+                        <select name="equipoVisitanteId" id="equipoVisitanteId" class="form-control" required>
+                            <option value="">-- Seleccione equipo --</option>
+                        @foreach (var e in equipos)
+                        {
+                                    <option value="@e.Id">@e.Nombre</option>
+                        }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label>Cancha:</label>
+                        <select name="canchaId" id="canchaId" class="form-control" required>
+                            <option value="">-- Seleccione cancha --</option>
+                        @foreach (var c in canchas)
+                        {
+                                    <option value="@c.Id">@c.Nombre</option>
+                        }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label>Goles Local:</label>
+                        <input type="number" name="golesLocal" class="form-control" min="0" value="0" />
+                    </div>
+                    <div class="col">
+                        <label>Goles Visitante:</label>
+                        <input type="number" name="golesVisitante" class="form-control" min="0" value="0" />
+                    </div>
+                    <div class="col">
+                        <label>Fecha y hora:</label>
+                        <input type="datetime-local" name="fecha" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" name="finalizado" id="finalizadoCheckbox" class="form-check-input" value="true" />
+                    <label class="form-check-label" for="finalizadoCheckbox">Partido finalizado</label>
+                </div>
+
+                <div id="goleadoresSection" style="display:none;">
+                    <div class="alert alert-info">Seleccione los jugadores que hicieron goles:</div>
+                    <div id="jugadoresLocalContainer"></div>
+                    <div id="jugadoresVisitanteContainer"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success">💾 Guardar Partido</button>
+            </form>
+            <hr />
+    }
+
+    <h4 class="mt-4">📋 Partidos Registrados</h4>
+    @if (!partidos.Any())
+    {
+            <div class="alert alert-warning">No hay partidos registrados.</div>
+    }
+    else
+    {
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Local</th>
+                        <th>Visitante</th>
+                        <th>Cancha</th>
+                        <th>Resultado</th>
+                        <th>Fecha</th>
+                    @if (esAdmin)
+                    {
+                        <th>Acciones</th>
+                    }
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var p in partidos)
+                {
+                            <tr>
+                                <td>@p.EquipoLocal?.Nombre</td>
+                                <td>@p.EquipoVisitante?.Nombre</td>
+                                <td>
+                            @if (p.Cancha != null)
+                            {
+                                            <a asp-action="FichaCancha"
+                                               asp-controller="Home"
+                                               asp-route-id="@p.CanchaId">
+                                    @p.Cancha.Nombre
+                                            </a>
+                            }
+                            else
+                            {
+                                            <span class="text-muted">—</span>
+                            }
+                                </td>
+                                <td>
+                            @(p.Finalizado
+                                  ? $"{p.GolesLocal} - {p.GolesVisitante}"
+                                  : "Partido pendiente")
+                                </td>
+                                <td>@p.Fecha.ToString("g")</td>
+                        @if (esAdmin)
+                        {
+                                        <td>
+                                            <a asp-action="EditarPartido" asp-route-id="@p.Id" class="btn btn-warning btn-sm">✏️</a>
+                                            <form asp-action="BorrarPartido" asp-route-id="@p.Id" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                            </form>
+                                        </td>
+                        }
+                            </tr>
+                }
+                </tbody>
+            </table>
+    }
+</div>
+
+@section Scripts {
+        <script>
+            function toggleGoleadoresSection() {
+                const seccion  = document.getElementById("goleadoresSection");
+                const checkbox = document.getElementById("finalizadoCheckbox");
+
+                if (checkbox.checked) {
+                    seccion.style.display = "block";
+                    cargarJugadores(document.getElementById("equipoLocalId").value, "local");
+                    cargarJugadores(document.getElementById("equipoVisitanteId").value, "visitante");
+                } else {
+                    seccion.style.display = "none";
+                    document.getElementById("jugadoresLocalContainer").innerHTML = "";
+                    document.getElementById("jugadoresVisitanteContainer").innerHTML = "";
+                }
+            }
+
+            function cargarJugadores(equipoId, lado) {
+                if (!equipoId) return;
+
+                fetch(`/Home/ObtenerJugadoresPorEquipo?equipoId=${equipoId}`)
+                    .then(res => res.json())
+                    .then(jugadores => {
+                        const cont = document.getElementById(`jugadores${capitalize(lado)}Container`);
+                        cont.innerHTML = "";
+
+                        jugadores.forEach(j => {
+                            cont.insertAdjacentHTML("beforeend", `
+                                <div class="mb-2">
+                                    <label>${j.nombre}:</label>
+                                    <input type="number"
+                                           name="goles_${lado}_${j.id}"
+                                           class="form-control"
+                                           min="0"
+                                           value="0" />
+                                    <input type="hidden"
+                                           name="jugadores_${lado}"
+                                           value="${j.id}" />
+                                </div>
+                            `);
+                        });
+                    });
+            }
+
+            function capitalize(s) {
+                return s.charAt(0).toUpperCase() + s.slice(1);
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                document.getElementById("finalizadoCheckbox")
+                        .addEventListener("change", toggleGoleadoresSection);
+                document.getElementById("equipoLocalId")
+                        .addEventListener("change", () => {
+                            if (document.getElementById("finalizadoCheckbox").checked)
+                                cargarJugadores(document.getElementById("equipoLocalId").value, "local");
+                        });
+                document.getElementById("equipoVisitanteId")
+                        .addEventListener("change", () => {
+                            if (document.getElementById("finalizadoCheckbox").checked)
+                                cargarJugadores(document.getElementById("equipoVisitanteId").value, "visitante");
+                        });
+            });
+        </script>
+}

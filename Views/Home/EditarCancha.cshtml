@@ -1,0 +1,61 @@
+﻿@model FutbolitoManager.Models.Cancha
+@using Microsoft.AspNetCore.Http
+@{
+    ViewBag.Title = "Editar Cancha";
+}
+
+<div style="padding:30px; max-width:600px; margin:auto; font-family:Arial;">
+    <h2 style="text-align:center; color:#00796b;">✏️ Editar cancha</h2>
+
+    <form asp-action="EditarCancha" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        @* Necesario pasar el id *@
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Nombre:</label>
+            <input type="text" name="nombre" value="@Model.Nombre" required
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ubicación:</label>
+            <input type="text" name="ubicacion" value="@Model.Ubicacion" required
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Reseña:</label>
+            <textarea name="resena" rows="4" class="form-control">@Model.Resena</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Imagen actual:</label><br />
+            @if (Model.Imagen != null && Model.Imagen.Length > 0)
+            {
+                var b64 = Convert.ToBase64String(Model.Imagen);
+                <img src="data:image/png;base64,@b64"
+                     style="max-width:100%; margin-bottom:10px; border-radius:6px;" />
+            }
+            else
+            {
+                <p style="color:#888;">(Sin imagen aún)</p>
+            }
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Subir nueva imagen (opcional):</label>
+            <input type="file" name="imagen" accept="image/*" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-warning w-100">
+            Guardar cambios
+        </button>
+    </form>
+
+    <div style="text-align:center; margin-top:20px;">
+        <a asp-action="FichaCancha" asp-route-id="@Model.Id" class="text-decoration-none">
+            ← Volver a la ficha
+        </a>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+﻿@model List<FutbolitoManager.Models.Equipo>
+@{
+    ViewBag.Title = "Equipos";
+    bool esAdmin = ViewBag.EsAdmin ?? false;
+}
+
+<div style="padding: 30px; max-width: 1200px; margin: auto; font-family: Arial;">
+    <h1 style="text-align: center; color: #00796b;">Listado de Equipos</h1>
+
+    @if (Model.Count == 0)
+    {
+            <p style="text-align: center; font-size: 18px;">No hay equipos agregados actualmente.</p>
+
+        @if (esAdmin)
+        {
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="/Home/AgregarEquipo">
+                            <button style="font-size: 18px; padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 8px;">
+                                Agregar equipo
+                            </button>
+                        </a>
+                    </div>
+        }
+    }
+    else
+    {
+            <div class="row">
+            @foreach (var equipo in Model)
+            {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 text-center shadow-sm">
+                        @if (equipo.Logo != null)
+                        {
+                            var base64 = Convert.ToBase64String(equipo.Logo);
+                                        <img src="data:image/png;base64,@base64" class="card-img-top" style="max-height: 200px; object-fit: contain;" />
+                        }
+                        else
+                        {
+                                        <img src="/imagenes/logo-generico.png" class="card-img-top" style="max-height: 200px;" />
+                        }
+
+                                <div class="card-body">
+                                    <h5 class="card-title">@equipo.Nombre</h5>
+                                    <a href="/Home/FichaEquipo/@equipo.Id" class="btn btn-primary mb-2">Ver ficha</a>
+
+                            @if (esAdmin)
+                            {
+                                            <form asp-action="BorrarEquipo" method="post">
+                                    @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@equipo.Id" />
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    🗑️ Eliminar
+                                                </button>
+                                            </form>
+                            }
+                                </div>
+                            </div>
+                        </div>
+            }
+            </div>
+
+        @if (esAdmin)
+        {
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="/Home/AgregarEquipo">
+                            <button style="font-size: 18px; padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 8px;">
+                                Agregar equipo
+                            </button>
+                        </a>
+                    </div>
+        }
+    }
+</div>

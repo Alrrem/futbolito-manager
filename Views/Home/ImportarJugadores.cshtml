@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Importar jugadores";
+    int equipoId = ViewBag.EquipoId;
+}
+
+<div style="padding:30px; max-width:600px; margin:auto; font-family:Arial;">
+    <h2 style="text-align:center; color:#00796b;">📥 Importar jugadores desde Excel/CSV</h2>
+
+    <form asp-action="ImportarJugadores"
+          asp-controller="Home"
+          asp-route-id="@equipoId"
+          method="post"
+          enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label>Archivo (.xlsx o .csv):</label>
+            <input type="file"
+                   name="file"
+                   accept=".xlsx,.xls,.csv"
+                   class="form-control"
+                   required />
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Importar</button>
+        <a asp-action="FichaEquipo"
+           asp-route-id="@equipoId"
+           asp-controller="Home"
+           class="btn btn-secondary w-100 mt-2">
+            ← Volver al equipo
+        </a>
+    </form>
+</div>

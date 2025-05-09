@@ -1,0 +1,118 @@
+﻿@using FutbolitoManager.Models
+@{
+    ViewBag.Title = "Estadísticas";
+    var posiciones = ViewBag.Posiciones as List<TablaPosicion> ?? new();
+    var goleadores = ViewBag.Goleadores as List<dynamic> ?? new();
+    bool hasPartidos = ViewBag.HasPartidos ?? false;
+}
+
+<div style="padding:30px; max-width:1200px; margin:auto; font-family:Arial;">
+    <h2 style="text-align:center; color:#00796b;">📊 Estadísticas del Campeonato</h2>
+
+    <div class="row mt-4">
+        <!-- Tabla de Posiciones -->
+        <div class="col-md-6">
+            <h3 style="color:#00796b;">🏆 Tabla de Posiciones</h3>
+            <table class="tabla-estadistica">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Equipo</th>
+                        <th>PTS</th>
+                        <th>PJ</th>
+                        <th>PG</th>
+                        <th>PE</th>
+                        <th>PP</th>
+                        <th>GF</th>
+                        <th>GC</th>
+                        <th>DIF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!posiciones.Any())
+                    {
+                        <tr>
+                            <td colspan="10" style="text-align:center;">No hay datos de posiciones.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @for (int i = 0; i < posiciones.Count; i++)
+                        {
+                            var p = posiciones[i];
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td>@p.Equipo</td>
+                                <td>@p.PTS</td>
+                                <td>@p.PJ</td>
+                                <td>@p.PG</td>
+                                <td>@p.PE</td>
+                                <td>@p.PP</td>
+                                <td>@p.GF</td>
+                                <td>@p.GC</td>
+                                <td>@p.DIF</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tabla de Goleadores -->
+        <div class="col-md-6">
+            <h3 style="color:#00796b;">⚽ Goleadores</h3>
+            <table class="tabla-estadistica">
+                <thead>
+                    <tr><th>Jugador</th><th>Equipo</th><th>Goles</th></tr>
+                </thead>
+                <tbody>
+                    @if (!hasPartidos)
+                    {
+                        <tr>
+                            <td colspan="3" style="text-align:center;">No hay datos de goleadores.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var j in goleadores)
+                        {
+                            <tr>
+                                <td>@j.Nombre</td>
+                                <td>@j.Equipo</td>
+                                <td>@j.Goles</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tabla-estadistica {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        box-shadow: 0 0 8px #ccc;
+    }
+
+        .tabla-estadistica th, .tabla-estadistica td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .tabla-estadistica thead {
+            background: #00796b;
+            color: #fff;
+        }
+
+        .tabla-estadistica tr:nth-child(even) {
+            background: #f4f4f4;
+        }
+
+        .tabla-estadistica tr:hover {
+            background: #e0f7fa;
+        }
+</style>

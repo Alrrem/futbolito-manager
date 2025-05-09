@@ -1,0 +1,76 @@
+﻿@model List<FutbolitoManager.Models.Cancha>
+@{
+    ViewBag.Title = "Canchas";
+    bool esAdmin = ViewBag.EsAdmin ?? false;
+}
+
+<div style="padding: 30px; max-width: 1000px; margin: auto; font-family: Arial;">
+    <h1 style="text-align: center; color: #00796b;">Gestión de Canchas</h1>
+
+    @if (!Model.Any())
+    {
+        <p style="text-align: center; font-size: 18px;">No hay canchas registradas.</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var cancha in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <!-- Miniatura -->
+                        @if (cancha.Imagen != null && cancha.Imagen.Length > 0)
+                        {
+                            var thumb = Convert.ToBase64String(cancha.Imagen);
+                            <img src="data:image/png;base64,@thumb"
+                                 class="card-img-top"
+                                 style="height: 180px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <img src="/imagenes/cancha-generico.png"
+                                 class="card-img-top"
+                                 style="height: 180px; object-fit: cover;" />
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title">@cancha.Nombre</h5>
+                            <p class="card-text" style="font-size: 14px; color: #555;">
+                                @cancha.Ubicacion
+                            </p>
+
+                            <a asp-action="FichaCancha" asp-route-id="@cancha.Id"
+                               class="btn btn-primary">
+                                Ver detalles
+                            </a>
+
+                            @if (esAdmin)
+                            {
+                                <form asp-action="BorrarCancha" asp-route-id="@cancha.Id"
+                                      method="post" style="display:inline; margin-left:8px;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger" title="Borrar cancha">
+                                        🗑️
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (esAdmin)
+    {
+        <div style="text-align: center; margin-top: 20px;">
+            <a asp-action="AgregarCancha">
+                <button style="font-size: 18px; padding: 10px 20px;
+                               background-color: #00796b; color: white;
+                               border: none; border-radius: 8px;">
+                    ➕ Agregar cancha
+                </button>
+            </a>
+        </div>
+    }
+</div>

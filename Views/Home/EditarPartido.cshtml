@@ -1,0 +1,180 @@
+﻿@model FutbolitoManager.Models.Partido
+@using FutbolitoManager.Models
+
+@{
+    ViewBag.Title = "Editar Partido";
+    var equipos = ViewBag.Equipos as List<Equipo> ?? new();
+    var canchas = ViewBag.Canchas as List<Cancha> ?? new();
+    var existing = ViewBag.ExistingGoals as Dictionary<int, int>
+                   ?? new Dictionary<int, int>();
+}
+
+<div style="padding:30px; max-width:600px; margin:auto; font-family:Arial;">
+    <h2 style="text-align:center; color:#00796b;">✏️ Editar Partido</h2>
+
+    <form asp-action="EditarPartido" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <!-- Equipos -->
+        <div class="mb-3">
+            <label>Equipo Local:</label>
+            <select id="equipoLocalId" name="equipoLocalId" class="form-control">
+                <option value="">-- Seleccione --</option>
+                @foreach (var e in equipos)
+                {
+                    <option value="@e.Id" selected="@(e.Id == Model.EquipoLocalId)">
+                        @e.Nombre
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Equipo Visitante:</label>
+            <select id="equipoVisitanteId" name="equipoVisitanteId" class="form-control">
+                <option value="">-- Seleccione --</option>
+                @foreach (var e in equipos)
+                {
+                    <option value="@e.Id" selected="@(e.Id == Model.EquipoVisitanteId)">
+                        @e.Nombre
+                    </option>
+                }
+            </select>
+        </div>
+
+        <!-- Cancha -->
+        <div class="mb-3">
+            <label>Cancha:</label>
+            <select name="canchaId" class="form-control">
+                <option value="">-- Seleccione --</option>
+                @foreach (var c in canchas)
+                {
+                    <option value="@c.Id" selected="@(c.Id == Model.CanchaId)">
+                        @c.Nombre
+                    </option>
+                }
+            </select>
+        </div>
+
+        <!-- Goles y Fecha -->
+        <div class="row mb-3">
+            <div class="col">
+                <label>Goles Local:</label>
+                <input type="number" name="golesLocal" class="form-control" min="0"
+                       value="@Model.GolesLocal" />
+            </div>
+            <div class="col">
+                <label>Goles Visitante:</label>
+                <input type="number" name="golesVisitante" class="form-control" min="0"
+                       value="@Model.GolesVisitante" />
+            </div>
+        </div>
+        <div class="mb-3">
+            <label>Fecha y hora:</label>
+            <input type="datetime-local" name="fecha" class="form-control"
+                   value="@Model.Fecha.ToString("yyyy-MM-ddTHH:mm")" />
+        </div>
+
+        <!-- Finalizado & Goleadores -->
+        <div class="form-check mb-3">
+            <input id="finalizadoCheckbox"
+                   class="form-check-input"
+                   type="checkbox"
+                   name="finalizado"
+                   value="true"
+            @(Model.Finalizado ? "checked" : "") />
+            <label class="form-check-label" for="finalizadoCheckbox">
+                Partido finalizado
+            </label>
+        </div>
+
+        <div id="goleadoresSection"
+             style="display:none; background:#e0f7fa; padding:15px; margin-bottom:20px;">
+            <strong>Seleccione los jugadores que hicieron goles:</strong>
+            <div class="mt-3">
+                <h6>Local: @equipos.FirstOrDefault(x => x.Id == Model.EquipoLocalId)?.Nombre</h6>
+                <div id="jugadoresLocalContainer"></div>
+            </div>
+            <div class="mt-3">
+                <h6>Visitante: @equipos.FirstOrDefault(x => x.Id == Model.EquipoVisitanteId)?.Nombre</h6>
+                <div id="jugadoresVisitanteContainer"></div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-warning w-100">💾 Guardar Cambios</button>
+    </form>
+
+    <div style="text-align:center; margin-top:20px;">
+        <a asp-action="Fechas" class="btn btn-secondary">← Volver a Fechas</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const existing = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(existing));
+
+        function toggleGoleadores() {
+            const sec = document.getElementById("goleadoresSection"),
+                cb = document.getElementById("finalizadoCheckbox");
+            if (cb.checked) {
+                sec.style.display = "block";
+                loadPlayers("local");
+                loadPlayers("visitante");
+            } else {
+                sec.style.display = "none";
+                document.getElementById("jugadoresLocalContainer").innerHTML = "";
+                document.getElementById("jugadoresVisitanteContainer").innerHTML = "";
+            }
+        }
+
+        function loadPlayers(side) {
+            const selId = document.getElementById(
+                side === "local" ? "equipoLocalId" : "equipoVisitanteId"
+            ).value;
+            if (!selId) return;
+            fetch(`/Home/ObtenerJugadoresPorEquipo?equipoId=${selId}`)
+                .then(r => r.json())
+                .then(list => {
+                    const cont = document.getElementById(
+                        side === "local"
+                            ? "jugadoresLocalContainer"
+                            : "jugadoresVisitanteContainer"
+                    );
+                    cont.innerHTML = "";
+                    list.forEach(j => {
+                        const pre = existing[j.id] || 0;
+                        cont.insertAdjacentHTML("beforeend", `
+                                <div class="mb-2">
+                                  <label>${j.nombre}:</label>
+                                  <input type="number"
+                                         name="goles_${side}_${j.id}"
+                                         class="form-control"
+                                         min="0"
+                                         value="${pre}" />
+                                  <input type="hidden"
+                                         name="jugadores_${side}"
+                                         value="${j.id}" />
+                                </div>
+                            `);
+                    });
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("finalizadoCheckbox")
+                .addEventListener("change", toggleGoleadores);
+            document.getElementById("equipoLocalId")
+                .addEventListener("change", () => {
+                    if (document.getElementById("finalizadoCheckbox").checked)
+                        loadPlayers("local");
+                });
+            document.getElementById("equipoVisitanteId")
+                .addEventListener("change", () => {
+                    if (document.getElementById("finalizadoCheckbox").checked)
+                        loadPlayers("visitante");
+                });
+            if (document.getElementById("finalizadoCheckbox").checked)
+                toggleGoleadores();
+        });
+    </script>
+}

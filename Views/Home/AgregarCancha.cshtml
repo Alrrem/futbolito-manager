@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Agregar Cancha";
+}
+
+<div style="padding:30px; max-width:600px; margin:auto; font-family:Arial;">
+    <h2 style="text-align:center; color:#00796b;">➕ Agregar nueva cancha</h2>
+
+    <form asp-action="GuardarCancha" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <label>Nombre de la cancha:</label>
+        <input type="text" name="nombre" required class="form-control mb-3" />
+
+        <label>Ubicación:</label>
+        <input type="text" name="ubicacion" required class="form-control mb-3" />
+
+        <label>Reseña:</label>
+        <textarea name="resena" rows="4" class="form-control mb-3" placeholder="Cómo llegar, observaciones…"></textarea>
+
+        <label>Imagen de la cancha:</label>
+        <input type="file" name="imagen" accept="image/*" class="form-control mb-4" />
+
+        <button type="submit" class="btn btn-success w-100">Guardar cancha</button>
+    </form>
+
+    <div style="text-align:center; margin-top:20px;">
+        <a asp-action="Canchas" class="text-decoration-none" style="color:#00796b;">
+            ← Volver a la lista de canchas
+        </a>
+    </div>
+</div>
