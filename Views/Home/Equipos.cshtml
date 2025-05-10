@@ -47,7 +47,7 @@
                             {
                                 <form asp-action="BorrarEquipo"
                                       method="post"
-                                      onsubmit="return confirm('futbolito-manager\n¿Desea eliminar este equipo?');">
+                                      onsubmit="return confirm('¿Desea eliminar este equipo?');">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@equipo.Id" />
                                     <button type="submit" class="btn btn-danger btn-sm">
