@@ -9,65 +9,80 @@
 
     @if (Model.Count == 0)
     {
-            <p style="text-align: center; font-size: 18px;">No hay equipos agregados actualmente.</p>
+        <p style="text-align: center; font-size: 18px;">No hay equipos agregados actualmente.</p>
 
         @if (esAdmin)
         {
-                    <div style="text-align: center; margin-top: 20px;">
-                        <a href="/Home/AgregarEquipo">
-                            <button style="font-size: 18px; padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 8px;">
-                                Agregar equipo
-                            </button>
-                        </a>
-                    </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/Home/AgregarEquipo">
+                    <button style="font-size: 18px; padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 8px;">
+                        Agregar equipo
+                    </button>
+                </a>
+            </div>
         }
     }
     else
     {
-            <div class="row">
+        <div class="row">
             @foreach (var equipo in Model)
             {
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100 text-center shadow-sm">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center shadow-sm">
                         @if (equipo.Logo != null)
                         {
                             var base64 = Convert.ToBase64String(equipo.Logo);
-                                        <img src="data:image/png;base64,@base64" class="card-img-top" style="max-height: 200px; object-fit: contain;" />
+                            <img src="data:image/png;base64,@base64" class="card-img-top" style="max-height: 200px; object-fit: contain;" />
                         }
                         else
                         {
-                                        <img src="/imagenes/logo-generico.png" class="card-img-top" style="max-height: 200px;" />
+                            <img src="/imagenes/logo-generico.png" class="card-img-top" style="max-height: 200px;" />
                         }
 
-                                <div class="card-body">
-                                    <h5 class="card-title">@equipo.Nombre</h5>
-                                    <a href="/Home/FichaEquipo/@equipo.Id" class="btn btn-primary mb-2">Ver ficha</a>
+                        <div class="card-body">
+                            <h5 class="card-title">@equipo.Nombre</h5>
+                            <a href="/Home/FichaEquipo/@equipo.Id" class="btn btn-primary mb-2">Ver ficha</a>
 
                             @if (esAdmin)
                             {
-                                            <form asp-action="BorrarEquipo" method="post">
+                                <form asp-action="BorrarEquipo"
+                                      method="post"
+                                      onsubmit="return confirm('¿Desea eliminar este equipo?');">
                                     @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@equipo.Id" />
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    🗑️ Eliminar
-                                                </button>
-                                            </form>
+                                    <input type="hidden" name="id" value="@equipo.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        🗑️ Eliminar
+                                    </button>
+                                </form>
                             }
-                                </div>
-                            </div>
                         </div>
+                    </div>
+                </div>
             }
-            </div>
+        </div>
 
         @if (esAdmin)
         {
-                    <div style="text-align: center; margin-top: 20px;">
-                        <a href="/Home/AgregarEquipo">
-                            <button style="font-size: 18px; padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 8px;">
-                                Agregar equipo
-                            </button>
-                        </a>
-                    </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/Home/AgregarEquipo">
+                    <button style="font-size: 18px; padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 8px;">
+                        Agregar equipo
+                    </button>
+                </a>
+            </div>
         }
     }
+
+    @* — Mensaje para usuarios normales — *@
+    @if (!esAdmin)
+    {
+        <div style="text-align: center; margin-top: 30px; font-size: 16px;">
+            ¿Tienes un equipo?
+            <a href="@Url.Content("~/Plantillas/jugadores_template.xlsx")" download>
+                Descarga esta planilla de Excel
+            </a>, complétala con los datos de tu equipo y envíala junto con tu logo a
+            <a href="mailto:admin@futbolito.cl">admin@futbolito.cl</a>.
+        </div>
+    }
+
 </div>

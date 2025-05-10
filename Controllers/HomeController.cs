@@ -34,23 +34,51 @@ namespace FutbolitoManager.Controllers
 
 
         //BORRAR EQUIPO
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult BorrarEquipo(int id)
         {
-            // Solo admin
+            // 1) Sólo el admin puede borrar
             if (HttpContext.Session.GetString("EsAdmin") != "true")
                 return Forbid();
 
-            var equipo = _context.Equipos.Find(id);
-            if (equipo != null)
-            {
-                _context.Equipos.Remove(equipo);
-                _context.SaveChanges();
-            }
+            // 2) Cargamos el equipo junto con sus jugadores
+            var equipo = _context.Equipos
+                .Include(e => e.Jugadores)
+                .FirstOrDefault(e => e.Id == id);
+            if (equipo == null)
+                return NotFound();
+
+            // 3) Eliminamos primero los registros de goles de esos jugadores
+            var jugadorIds = equipo.Jugadores.Select(j => j.Id).ToList();
+            var golesJugadores = _context.PartidoJugadores
+                .Where(pj => jugadorIds.Contains(pj.JugadorId));
+            _context.PartidoJugadores.RemoveRange(golesJugadores);
+
+            // 4) Eliminamos los propios jugadores
+            _context.Jugadores.RemoveRange(equipo.Jugadores);
+
+            // 5) Ahora eliminamos los partidos en los que participó este equipo
+            //    (evita conflict FK con Partidos→Equipos)
+            var partidos = _context.Partidos
+                .Where(p => p.EquipoLocalId == id || p.EquipoVisitanteId == id);
+            // Antes de borrar cada partido, eliminamos sus detalles en PartidoJugadores
+            var partidoIds = partidos.Select(p => p.Id).ToList();
+            var detalles = _context.PartidoJugadores
+                .Where(d => partidoIds.Contains(d.PartidoId));
+            _context.PartidoJugadores.RemoveRange(detalles);
+            _context.Partidos.RemoveRange(partidos);
+
+            // 6) Finalmente, eliminamos el equipo
+            _context.Equipos.Remove(equipo);
+
+            // 7) Persistimos todos los cambios en una sola transacción
+            _context.SaveChanges();
+
             return RedirectToAction("Equipos");
         }
+
+
 
         //-----------------------------------------------
 
@@ -466,7 +494,17 @@ namespace FutbolitoManager.Controllers
             return RedirectToAction("Fechas");
         }
 
+        private string NormalizarRut(string rut)
+        {
+            if (string.IsNullOrWhiteSpace(rut))
+                return string.Empty;
 
+            return rut
+                .Replace(".", "")
+                .Replace("-", "")
+                .Trim()
+                .ToUpperInvariant();
+        }
 
 
 
@@ -876,6 +914,7 @@ namespace FutbolitoManager.Controllers
 
         //Guardar Jugador
 
+
         [HttpPost]
         [HttpPost]
         public IActionResult GuardarJugador(JugadorFormModel datos)
@@ -891,29 +930,42 @@ namespace FutbolitoManager.Controllers
             if (!_context.Equipos.Any(e => e.Id == datos.EquipoId))
                 return NotFound();
 
-            // 3) Validar que el RUT no esté repetido
-            if (_context.Jugadores.Any(j => j.Rut == datos.Rut))
+            // 3) Normalizamos el RUT de entrada
+            var rutLimpio = NormalizarRut(datos.Rut);
+
+            // 4) Comprobamos duplicados sobre la columna Rut existente,
+            //    normalizando también la comparación en la base de datos.
+            bool existe = _context.Jugadores
+                .Any(j => j.Rut
+                    .Replace(".", "")
+                    .Replace("-", "")
+                    .ToUpper() == rutLimpio);
+
+            if (existe)
             {
                 ModelState.AddModelError(nameof(datos.Rut), "Ya existe un jugador con ese RUT.");
                 ViewBag.EquipoId = datos.EquipoId;
                 return View("AgregarJugador", datos);
             }
 
-            // 4) Guardar el nuevo jugador
+            // 5) Creamos el jugador usando el RUT tal cual vino (o, si prefieres,
+            //    guardarlo siempre en formato limpio, sustitúyelo aquí por rutLimpio).
             var nuevoJugador = new Jugador
             {
                 Nombre = datos.Nombre,
-                Rut = datos.Rut,
+                Rut = datos.Rut, // o bien Rut = rutLimpio
                 Edad = datos.Edad,
                 Posicion = datos.Posicion,
                 Goles = datos.Goles,
                 EquipoId = datos.EquipoId
             };
+
             _context.Jugadores.Add(nuevoJugador);
             _context.SaveChanges();
 
             return RedirectToAction("FichaEquipo", new { id = datos.EquipoId });
         }
+
         //Buscar JUGADOR
 
         public IActionResult BuscarJugador(string termino)

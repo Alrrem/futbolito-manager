@@ -5,7 +5,11 @@
 <div style="padding: 30px; max-width: 600px; margin: auto; font-family: Arial;">
     <h2 style="text-align: center; color: #00796b;">Agregar nuevo equipo</h2>
 
-    <form asp-action="GuardarEquipo" asp-controller="Home" method="post" enctype="multipart/form-data">
+    <form asp-action="GuardarEquipo"
+          asp-controller="Home"
+          method="post"
+          enctype="multipart/form-data"
+          onsubmit="return confirm('¿Desea agregar este equipo?');">
         @Html.AntiForgeryToken()
 
         <label>Nombre del equipo:</label>
