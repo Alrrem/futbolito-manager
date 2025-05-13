@@ -15,7 +15,9 @@
         public int CanchaId { get; set; }
         public Cancha Cancha { get; set; }
 
-        public virtual ICollection<PartidoJugador> PartidoJugadores { get; set; }
+        public ICollection<PartidoJugador> PartidoJugadores { get; set; }
+
+
             = new List<PartidoJugador>();
     }
 }

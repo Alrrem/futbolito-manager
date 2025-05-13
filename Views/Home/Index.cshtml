@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Inicio";
     bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
+    int? editarId = ViewBag.EditarId as int?;
 }
 
 <div style="width: 100%; height: 100vh;">
@@ -17,42 +18,23 @@
         <!-- Menú lateral -->
         <div style="width: 200px; padding-left: 40px;">
             <form method="get" action="/Home/Equipos">
-                <button type="submit"
-                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
-                    Equipos
-                </button>
+                <button type="submit" style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">Equipos</button>
             </form>
-
             <form method="get" action="/Home/Canchas">
-                <button type="submit"
-                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
-                    Canchas
-                </button>
+                <button type="submit" style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">Canchas</button>
             </form>
-
             <form method="get" action="/Home/Estadisticas">
-                <button type="submit"
-                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
-                    Estadísticas
-                </button>
+                <button type="submit" style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">Estadísticas</button>
             </form>
-
             <form method="get" action="/Home/Fechas">
-                <button type="submit"
-                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
-                    Fechas
-                </button>
+                <button type="submit" style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">Fechas</button>
             </form>
-
             <form method="get" action="/Home/Reglamento">
-                <button type="submit"
-                        style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">
-                    Reglamento
-                </button>
+                <button type="submit" style="font-size: 20px; margin-bottom: 30px; width: 150px; height: 50px;">Reglamento</button>
             </form>
         </div>
 
-        <!-- Área de contenido: galería de equipos o mensaje -->
+        <!-- Área de contenido -->
         <div style="flex-grow: 1; padding: 20px; overflow-y: auto;">
             @if (!Model.Any())
             {
@@ -80,11 +62,7 @@
                                 }
                                 else
                                 {
-                                    <div style="
-                                            width:100%; height:100px;
-                                            display:flex; align-items:center; justify-content:center;
-                                            background:#f4f4f4; color:#777;
-                                                        ">
+                                    <div style="width:100%; height:100px; display:flex; align-items:center; justify-content:center; background:#f4f4f4; color:#777;">
                                         Sin logo
                                     </div>
                                 }
@@ -94,7 +72,66 @@
                     }
                 </div>
             }
-        </div>
 
+            <!-- Bloque de Noticias -->
+            <div style="width: 100%; padding: 40px; margin-top: 40px;">
+                <h2 style="text-align: center;">📰 Noticias del Campeonato</h2>
+
+                @if (ViewBag.Noticias != null && ViewBag.Noticias.Count > 0)
+                {
+                    <ul style="list-style-type: none; padding: 0;">
+                        @foreach (var noticia in ViewBag.Noticias)
+                        {
+                            <li style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                                @if (esAdmin && editarId == noticia.Id)
+                                {
+                                    <form asp-action="EditarNoticia" method="post">
+                                        <input type="hidden" name="id" value="@noticia.Id" />
+                                        <input type="text" name="titulo" class="form-control mb-2" value="@noticia.Titulo" required />
+                                        <textarea name="contenido" class="form-control mb-2" rows="4" required>@noticia.Contenido</textarea>
+                                        <button type="submit" class="btn btn-success btn-sm">💾 Guardar</button>
+                                        <a href="/" class="btn btn-secondary btn-sm">Cancelar</a>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <h4>@noticia.Titulo</h4>
+                                    <small style="color: gray;">@noticia.FechaPublicacion.ToShortDateString()</small>
+                                    <p>@Html.Raw(noticia.Contenido.Replace("\n", "<br />"))</p>
+
+                                    @if (esAdmin)
+                                    {
+                                        <form asp-action="EliminarNoticia" method="post" style="display:inline;">
+                                            <input type="hidden" name="id" value="@noticia.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta noticia?');">🗑 Eliminar</button>
+                                        </form>
+                                        <form method="get" style="display:inline;">
+                                            <input type="hidden" name="editarId" value="@noticia.Id" />
+                                            <button type="submit" class="btn btn-warning btn-sm">✏️ Editar</button>
+                                        </form>
+                                    }
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p style="text-align: center;">No hay noticias publicadas aún.</p>
+                }
+
+                @if (esAdmin)
+                {
+                    <div style="margin-top: 30px;">
+                        <h4>Agregar nueva noticia</h4>
+                        <form asp-action="AgregarNoticia" method="post">
+                            <input type="text" name="titulo" placeholder="Título" class="form-control mb-2" required />
+                            <textarea name="contenido" placeholder="Contenido" class="form-control mb-2" rows="4" required></textarea>
+                            <button type="submit" class="btn btn-primary">Publicar</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>

@@ -9,7 +9,7 @@ namespace FutbolitoManager.Data
             : base(options)
         {
         }
-
+        public DbSet<Noticia> Noticias { get; set; }
         public DbSet<Equipo> Equipos { get; set; }
         public DbSet<Administrador> Administradores { get; set; }
         public DbSet<Jugador> Jugadores { get; set; }
@@ -21,14 +21,14 @@ namespace FutbolitoManager.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1) Equipo 1→N Jugador
+            // 1) Equipo 1→N Jugador (cascade)
             modelBuilder.Entity<Equipo>()
                 .HasMany(e => e.Jugadores)
                 .WithOne(j => j.Equipo)
                 .HasForeignKey(j => j.EquipoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 2) Partido N→N Jugador vía PartidoJugador
+            // 2) Partido N→N Jugador vía PartidoJugador (cascade sobre ambos FK)
             modelBuilder.Entity<PartidoJugador>()
                 .HasKey(pj => pj.Id);
 

@@ -17,14 +17,81 @@ namespace FutbolitoManager.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        //INDEX
+        public IActionResult Index(int? editarId = null)
         {
             var equipos = _context.Equipos.ToList();
+            var noticias = _context.Noticias
+                .OrderByDescending(n => n.FechaPublicacion)
+                .ToList();
+
+            ViewBag.Noticias = noticias;
             ViewBag.EsAdmin = HttpContext.Session.GetString("EsAdmin") == "true";
+            ViewBag.EditarId = editarId;
+
             return View(equipos);
         }
 
-        // ► EQUIPOS: listado de equipos (misma galería, pero bajo /Home/Equipos)
+        //------------------------------------------------------------------------
+
+        //NOTICIAS
+        //ELIMINAR NOTICIA
+        [HttpPost]
+        public IActionResult EliminarNoticia(int id)
+        {
+            if (HttpContext.Session.GetString("EsAdmin") != "true")
+                return Forbid();
+
+            var noticia = _context.Noticias.Find(id);
+            if (noticia != null)
+            {
+                _context.Noticias.Remove(noticia);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+        //---------------------------------------------------------
+        //EDITAR NOTICA
+        [HttpPost]
+        public IActionResult EditarNoticia(int id, string titulo, string contenido)
+        {
+            if (HttpContext.Session.GetString("EsAdmin") != "true")
+                return Forbid();
+
+            var noticia = _context.Noticias.Find(id);
+            if (noticia != null)
+            {
+                noticia.Titulo = titulo;
+                noticia.Contenido = contenido;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+        //---------------------------------------------------------------
+        // Guardar nueva noticia
+        [HttpPost]
+        public IActionResult AgregarNoticia(string titulo, string contenido)
+        {
+            if (HttpContext.Session.GetString("EsAdmin") != "true")
+                return Forbid();
+
+            var noticia = new Noticia
+            {
+                Titulo = titulo,
+                Contenido = contenido,
+                FechaPublicacion = DateTime.Now
+            };
+
+            _context.Noticias.Add(noticia);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+        //----------------------------------------------------------
+
+        //EQUIPOS 
         public IActionResult Equipos()
         {
             var equipos = _context.Equipos.ToList();
@@ -516,18 +583,27 @@ namespace FutbolitoManager.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult BorrarPartido(int id)
         {
-            // Solo admin
             if (HttpContext.Session.GetString("EsAdmin") != "true")
                 return Forbid();
 
-            var p = _context.Partidos.Find(id);
-            if (p != null)
+            var partido = _context.Partidos
+                .Include(p => p.PartidoJugadores)
+                .FirstOrDefault(p => p.Id == id);
+
+            if (partido != null)
             {
-                _context.Partidos.Remove(p);
+                // Eliminar primero los hijos
+                _context.PartidoJugadores.RemoveRange(partido.PartidoJugadores);
+
+                // Luego eliminar el padre
+                _context.Partidos.Remove(partido);
+
                 _context.SaveChanges();
             }
-            return RedirectToAction("Fechas");
+
+            return RedirectToAction("Index");
         }
+
 
         //--------------------------------------------------
         //EDITAR PARTIDO
