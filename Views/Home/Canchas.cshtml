@@ -18,7 +18,6 @@
             {
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <!-- Miniatura -->
                         @if (cancha.Imagen != null && cancha.Imagen.Length > 0)
                         {
                             var thumb = Convert.ToBase64String(cancha.Imagen);
@@ -42,6 +41,11 @@
                             <a asp-action="FichaCancha" asp-route-id="@cancha.Id"
                                class="btn btn-primary">
                                 Ver detalles
+                            </a>
+
+                            <a href="https://www.google.com/maps/search/?api=1&query=@Uri.EscapeDataString(cancha.Nombre)"
+                               class="btn btn-outline-success mt-2" target="_blank">
+                                📍 Ver ubicación en mapa
                             </a>
 
                             @if (esAdmin)

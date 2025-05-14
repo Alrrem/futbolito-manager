@@ -1,8 +1,7 @@
 ﻿@model FutbolitoManager.Models.Cancha
-@using Microsoft.AspNetCore.Http   <!-- para GetString -->
+@using Microsoft.AspNetCore.Http
 @{
     ViewBag.Title = "Ficha Cancha";
-    // obtenemos la sesión desde Context, no HttpContext estático
     bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
 }
 
@@ -22,6 +21,13 @@
     </div>
 
     <p><strong>Ubicación:</strong> @Model.Ubicacion</p>
+    <p>
+        <a href="https://www.google.com/maps/search/?api=1&query=@Uri.EscapeDataString(Model.Ubicacion)"
+           target="_blank" class="btn btn-outline-success">
+            📍 Ver ubicación en mapa
+        </a>
+    </p>
+
     <p><strong>Reseña:</strong></p>
     <p style="white-space:pre-wrap; border:1px solid #ddd; padding:15px; border-radius:6px;">
         @Model.Resena

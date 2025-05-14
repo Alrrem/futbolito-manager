@@ -9,7 +9,6 @@
 
     <form asp-action="EditarCancha" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
-        @* Necesario pasar el id *@
         <input type="hidden" name="id" value="@Model.Id" />
 
         <div class="mb-3">
@@ -22,6 +21,12 @@
             <label class="form-label">Ubicación:</label>
             <input type="text" name="ubicacion" value="@Model.Ubicacion" required
                    class="form-control" />
+            <div class="mt-2">
+                <a href="https://www.google.com/maps/search/?api=1&query=@Uri.EscapeDataString(Model.Ubicacion)"
+                   target="_blank" class="btn btn-sm btn-outline-primary">
+                    📍 Ver ubicación en mapa
+                </a>
+            </div>
         </div>
 
         <div class="mb-3">
