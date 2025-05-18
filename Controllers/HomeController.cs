@@ -1,5 +1,6 @@
 ﻿using FutbolitoManager.Data;
 using FutbolitoManager.Models;
+using FutbolitoManager.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
@@ -10,11 +11,13 @@ namespace FutbolitoManager.Controllers
     public class HomeController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly AdministradorManager _adminManager;
 
         // Constructor con inyección de dependencia
         public HomeController(AppDbContext context)
         {
             _context = context;
+            _adminManager = new AdministradorManager(context);
         }
 
         //INDEX
@@ -370,7 +373,7 @@ namespace FutbolitoManager.Controllers
 
         //--------------------------------------------------
 
-
+        //LOGIN LOGUOT
         public IActionResult Login()
         {
             return View();
@@ -380,13 +383,12 @@ namespace FutbolitoManager.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
-            var admin = _context.Administradores
-                .FirstOrDefault(a => a.Email == email && a.Password == password);
+            var admin = _context.Administradores.FirstOrDefault(a => a.Email == email);
 
-            if (admin != null)
+            if (admin != null && SecurityHelper.VerifyPassword(password, admin.Password, admin.Salt))
             {
                 HttpContext.Session.SetString("EsAdmin", "true");
-                HttpContext.Session.SetString("AdminEmail", admin.Email); // <-- se guarda el correo
+                HttpContext.Session.SetString("AdminEmail", admin.Email);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -395,6 +397,17 @@ namespace FutbolitoManager.Controllers
                 return View();
             }
         }
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("EsAdmin");
+            HttpContext.Session.Remove("AdminEmail");
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
+        //-----------------------------------------------------------------------
+
         // CODIGOS PARA EQUIPOS!!
 
         //Agregar un equipo
@@ -445,11 +458,7 @@ namespace FutbolitoManager.Controllers
         }
 
         //-----------------------------
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
-        }
+
 
 
         //--------------------------------------------------
