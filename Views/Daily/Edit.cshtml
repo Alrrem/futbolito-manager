@@ -1,0 +1,32 @@
+﻿@model FutbolitoManager.Models.DailyLog
+@using FutbolitoManager.Models
+
+@{
+    ViewBag.Title = "Editar Log Diario";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="SprintId" class="form-label">Sprint</label>
+        <select asp-for="SprintId" class="form-select" asp-items="ViewBag.Sprints">
+            <option value="">-- Sin asignar --</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Ayer" class="form-label">Qué hice ayer</label>
+        <textarea asp-for="Ayer" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Hoy" class="form-label">Qué haré hoy</label>
+        <textarea asp-for="Hoy" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Bloqueos" class="form-label">Bloqueos</label>
+        <textarea asp-for="Bloqueos" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</form>

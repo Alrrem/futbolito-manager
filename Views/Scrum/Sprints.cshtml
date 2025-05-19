@@ -1,0 +1,37 @@
+﻿@model IEnumerable<FutbolitoManager.Models.Sprint>
+@{
+    ViewBag.Title = "Sprints";
+}
+
+<h2 class="mb-4">Gestión de Sprints</h2>
+<a asp-action="CreateSprint" class="btn btn-primary mb-3">Nuevo Sprint</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var sprint in Model)
+    {
+        <tr>
+            <td>@sprint.Id</td>
+            <td>@sprint.Nombre</td>
+            <td>@sprint.FechaInicio.ToString("yyyy-MM-dd")</td>
+            <td>@sprint.FechaFin.ToString("yyyy-MM-dd")</td>
+            <td>
+                <a asp-action="EditSprint" asp-route-id="@sprint.Id" class="btn btn-sm btn-secondary">Editar</a>
+                <form asp-action="DeleteSprint" asp-route-id="@sprint.Id" method="post" class="d-inline"
+                      onsubmit="return confirm('¿Eliminar este sprint?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

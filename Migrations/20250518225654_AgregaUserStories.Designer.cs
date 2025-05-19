@@ -4,6 +4,7 @@ using FutbolitoManager.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FutbolitoManager.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250518225654_AgregaUserStories")]
+    partial class AgregaUserStories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,43 +79,6 @@ namespace FutbolitoManager.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Canchas");
-                });
-
-            modelBuilder.Entity("FutbolitoManager.Models.DailyLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Ayer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bloqueos")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Hoy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SprintId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SprintId");
-
-                    b.ToTable("DailyLogs");
                 });
 
             modelBuilder.Entity("FutbolitoManager.Models.Equipo", b =>
@@ -284,90 +250,6 @@ namespace FutbolitoManager.Migrations
                     b.ToTable("PartidoJugadores");
                 });
 
-            modelBuilder.Entity("FutbolitoManager.Models.Sprint", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("FechaFin")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sprints");
-                });
-
-            modelBuilder.Entity("FutbolitoManager.Models.SprintRetrospective", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AccionesMejora")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LoQueFuncionó")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LoQueNoFuncionó")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SprintId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SprintId");
-
-                    b.ToTable("SprintRetrospectives");
-                });
-
-            modelBuilder.Entity("FutbolitoManager.Models.SprintReview", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Aprobado")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ComentariosPO")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SprintId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SprintId");
-
-                    b.ToTable("SprintReviews");
-                });
-
             modelBuilder.Entity("FutbolitoManager.Models.UserStory", b =>
                 {
                     b.Property<int>("Id")
@@ -379,9 +261,6 @@ namespace FutbolitoManager.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SprintId")
-                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -395,19 +274,7 @@ namespace FutbolitoManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SprintId");
-
                     b.ToTable("UserStories");
-                });
-
-            modelBuilder.Entity("FutbolitoManager.Models.DailyLog", b =>
-                {
-                    b.HasOne("FutbolitoManager.Models.Sprint", "Sprint")
-                        .WithMany("DailyLogs")
-                        .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Sprint");
                 });
 
             modelBuilder.Entity("FutbolitoManager.Models.Jugador", b =>
@@ -467,38 +334,6 @@ namespace FutbolitoManager.Migrations
                     b.Navigation("Partido");
                 });
 
-            modelBuilder.Entity("FutbolitoManager.Models.SprintRetrospective", b =>
-                {
-                    b.HasOne("FutbolitoManager.Models.Sprint", "Sprint")
-                        .WithMany()
-                        .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sprint");
-                });
-
-            modelBuilder.Entity("FutbolitoManager.Models.SprintReview", b =>
-                {
-                    b.HasOne("FutbolitoManager.Models.Sprint", "Sprint")
-                        .WithMany()
-                        .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sprint");
-                });
-
-            modelBuilder.Entity("FutbolitoManager.Models.UserStory", b =>
-                {
-                    b.HasOne("FutbolitoManager.Models.Sprint", "Sprint")
-                        .WithMany("UserStories")
-                        .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Sprint");
-                });
-
             modelBuilder.Entity("FutbolitoManager.Models.Equipo", b =>
                 {
                     b.Navigation("Jugadores");
@@ -512,13 +347,6 @@ namespace FutbolitoManager.Migrations
             modelBuilder.Entity("FutbolitoManager.Models.Partido", b =>
                 {
                     b.Navigation("PartidoJugadores");
-                });
-
-            modelBuilder.Entity("FutbolitoManager.Models.Sprint", b =>
-                {
-                    b.Navigation("DailyLogs");
-
-                    b.Navigation("UserStories");
                 });
 #pragma warning restore 612, 618
         }

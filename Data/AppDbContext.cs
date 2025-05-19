@@ -9,6 +9,9 @@ namespace FutbolitoManager.Data
             : base(options)
         {
         }
+
+        public DbSet<UserStory> UserStories { get; set; }
+        public DbSet<Sprint> Sprints { get; set; }
         public DbSet<Noticia> Noticias { get; set; }
         public DbSet<Equipo> Equipos { get; set; }
         public DbSet<Administrador> Administradores { get; set; }
@@ -16,10 +19,40 @@ namespace FutbolitoManager.Data
         public DbSet<Partido> Partidos { get; set; }
         public DbSet<PartidoJugador> PartidoJugadores { get; set; }
         public DbSet<Cancha> Canchas { get; set; }
+        public DbSet<DailyLog> DailyLogs { get; set; }     // ← DailyLogs
+        public DbSet<SprintReview> SprintReviews { get; set; }
+        public DbSet<SprintRetrospective> SprintRetrospectives { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<SprintReview>()
+    .HasOne(r => r.Sprint)
+    .WithMany()
+    .HasForeignKey(r => r.SprintId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<SprintRetrospective>()
+                .HasOne(r => r.Sprint)
+                .WithMany()
+                .HasForeignKey(r => r.SprintId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relación 1:N Sprint → UserStory
+            modelBuilder.Entity<Sprint>()
+                .HasMany(s => s.UserStories)
+                .WithOne(us => us.Sprint)
+                .HasForeignKey(us => us.SprintId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Relación 1:N Sprint → DailyLog
+            modelBuilder.Entity<Sprint>()
+                .HasMany(s => s.DailyLogs)
+                .WithOne(dl => dl.Sprint)
+                .HasForeignKey(dl => dl.SprintId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // 1) Equipo 1→N Jugador (cascade)
             modelBuilder.Entity<Equipo>()

@@ -1,0 +1,71 @@
+﻿@model IEnumerable<FutbolitoManager.Models.DailyLog>
+@using FutbolitoManager.Models
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewBag.Title = "Daily Scrum";
+    bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
+    var sprintList = (SelectList)ViewBag.Sprints;
+    int? selected = ViewBag.SelectedSprint as int?;
+}
+
+<h2 class="mb-4">Daily Scrum</h2>
+
+@if (esAdmin)
+{
+    <a asp-action="Create" class="btn btn-primary mb-3">Nuevo Log Diario</a>
+}
+
+<form method="get" asp-action="Index" class="mb-3">
+    <label class="me-2">Sprint:</label>
+    <select name="sprintId" class="form-select w-auto d-inline-block">
+        <option value="">Todos los Sprints</option>
+        @foreach (var sprint in sprintList)
+        {
+            if (sprint.Value == selected?.ToString())
+            {
+                <option value="@sprint.Value" selected="selected">@sprint.Text</option>
+            }
+            else
+            {
+                <option value="@sprint.Value">@sprint.Text</option>
+            }
+        }
+    </select>
+    <button class="btn btn-outline-secondary ms-2">Filtrar</button>
+    <a asp-action="Index" class="btn btn-link">Limpiar</a>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Sprint</th>
+            <th>Ayer</th>
+            <th>Hoy</th>
+            <th>Bloqueos</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var log in Model)
+    {
+        <tr>
+            <td>@log.CreatedBy</td>
+            <td>@log.Fecha.ToString("yyyy-MM-dd HH:mm")</td>
+            <td>@(log.Sprint?.Nombre ?? "—")</td>
+            <td>@log.Ayer</td>
+            <td>@log.Hoy</td>
+            <td>@log.Bloqueos</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@log.Id" class="btn btn-sm btn-secondary">Editar</a>
+                <form asp-action="Delete" method="post" asp-route-id="@log.Id" class="d-inline"
+                      onsubmit="return confirm('¿Eliminar este log?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

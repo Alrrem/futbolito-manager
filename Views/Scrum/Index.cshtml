@@ -1,0 +1,73 @@
+﻿@model IEnumerable<FutbolitoManager.Models.UserStory>
+@using FutbolitoManager.Models
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@functions {
+    string GetStatusLabel(StoryStatus status) => status switch
+    {
+        StoryStatus.ToDo       => "Por hacer",
+        StoryStatus.InProgress => "En progreso",
+        StoryStatus.Done       => "Terminado",
+        _                      => status.ToString()
+    };
+}
+
+@{
+    ViewBag.Title = "Tablero de Historias";
+    bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
+    var sprintList = (SelectList)ViewBag.Sprints;
+    int? selected = ViewBag.SelectedSprint as int?;
+}
+
+<h2 class="mb-4">Tablero de Historias</h2>
+
+@if (esAdmin)
+{
+    <a asp-action="Create" class="btn btn-primary mb-3">Nueva Historia</a>
+}
+
+<form method="get" asp-action="Index" class="mb-3">
+    <select name="sprintId" class="form-select w-auto d-inline-block">
+        <option value="">Todos los Sprints</option>
+        @foreach (var sprint in sprintList)
+        {
+            <option value="@sprint.Value" selected="@(sprint.Value == (selected?.ToString()))">
+                @sprint.Text
+            </option>
+        }
+    </select>
+    <button class="btn btn-outline-secondary ms-2">Filtrar</button>
+    <a asp-action="Index" class="btn btn-link">Limpiar</a>
+</form>
+
+<div class="row">
+    @foreach (var status in Enum.GetValues(typeof(StoryStatus)).Cast<StoryStatus>())
+    {
+        <div class="col-md-4">
+            <h4>@GetStatusLabel(status)</h4>
+            <ul class="list-group">
+                @foreach (var story in Model.Where(s => s.Status == status))
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>@story.Title</strong> (@story.StoryPoints)
+                            <p>@story.Description</p>
+                            @if (story.Sprint != null)
+                            {
+                                <small class="text-muted">Sprint: @story.Sprint.Nombre</small>
+                            }
+                        </div>
+                        <span>
+                            <a asp-action="Edit" asp-route-id="@story.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <form asp-action="DeleteStory" asp-route-id="@story.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Eliminar historia?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                            </form>
+                        </span>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

@@ -1,0 +1,63 @@
+﻿@model IEnumerable<FutbolitoManager.Models.SprintReview>
+@using FutbolitoManager.Models
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewBag.Title = "Sprint Review";
+    bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
+    var sprintList = (SelectList)ViewBag.Sprints;
+    int? selected = ViewBag.SelectedSprint as int?;
+}
+
+<h2 class="mb-4">Sprint Review</h2>
+
+@if (esAdmin)
+{
+    <a asp-action="Create" class="btn btn-primary mb-3">Nueva Review</a>
+}
+
+<form method="get" asp-action="Index" class="mb-3">
+    <label class="me-2">Sprint:</label>
+    <select name="sprintId" class="form-select w-auto d-inline-block">
+        <option value="">Todos los Sprints</option>
+        @foreach (var sprint in sprintList)
+        {
+            if (sprint.Value == selected?.ToString())
+            {
+                <option value="@sprint.Value" selected="selected">@sprint.Text</option>
+            }
+            else
+            {
+                <option value="@sprint.Value">@sprint.Text</option>
+            }
+        }
+    </select>
+    <button class="btn btn-outline-secondary ms-2">Filtrar</button>
+    <a asp-action="Index" class="btn btn-link">Limpiar</a>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Sprint</th>
+            <th>Fecha</th>
+            <th>Comentarios PO</th>
+            <th>Aprobado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var review in Model)
+    {
+        <tr>
+            <td>@review.Sprint.Nombre</td>
+            <td>@review.Fecha.ToString("yyyy-MM-dd")</td>
+            <td>@review.ComentariosPO</td>
+            <td>@(review.Aprobado ? "Sí" : "No")</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@review.Id" class="btn btn-sm btn-secondary">Editar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

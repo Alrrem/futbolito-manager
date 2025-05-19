@@ -1,0 +1,39 @@
+﻿@model FutbolitoManager.Models.UserStory
+@using FutbolitoManager.Models
+
+@{
+    ViewBag.Title = "Nueva Historia";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Título</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Descripción</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="StoryPoints" class="form-label">Puntos</label>
+        <input asp-for="StoryPoints" type="number" min="1" class="form-control" />
+        <span asp-validation-for="StoryPoints" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label">Estado</label>
+        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<StoryStatus>()"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SprintId" class="form-label">Sprint</label>
+        <select asp-for="SprintId" class="form-select" asp-items="ViewBag.Sprints">
+            <option value="">-- Sin asignar --</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
