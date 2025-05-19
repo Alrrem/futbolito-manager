@@ -2,29 +2,45 @@
 @using FutbolitoManager.Models
 
 @{
-    ViewBag.Title = "Editar Retrospective";
+    ViewData["Title"] = "Editar Retrospectiva";
 }
 
-<h2>@ViewBag.Title</h2>
+<h2>@ViewData["Title"]</h2>
 
 <form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="mb-3">
-        <label asp-for="SprintId" class="form-label">Sprint</label>
-        <select asp-for="SprintId" class="form-select" asp-items="ViewBag.Sprints"></select>
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="SprintId" class="control-label">Sprint</label>
+        <select asp-for="SprintId" class="form-control" asp-items="ViewBag.Sprints"></select>
     </div>
-    <div class="mb-3">
-        <label asp-for="LoQueFuncionó" class="form-label">Lo que funcionó</label>
+
+    <div class="form-group">
+        <label asp-for="Fecha" class="control-label">Fecha</label>
+        <input asp-for="Fecha" class="form-control" type="datetime-local" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LoQueFuncionó" class="control-label">Lo que Funcionó</label>
         <textarea asp-for="LoQueFuncionó" class="form-control"></textarea>
     </div>
-    <div class="mb-3">
-        <label asp-for="LoQueNoFuncionó" class="form-label">Lo que no funcionó</label>
+
+    <div class="form-group">
+        <label asp-for="LoQueNoFuncionó" class="control-label">Lo que No Funcionó</label>
         <textarea asp-for="LoQueNoFuncionó" class="form-control"></textarea>
     </div>
-    <div class="mb-3">
-        <label asp-for="AccionesMejora" class="form-label">Acciones de mejora</label>
+
+    <div class="form-group">
+        <label asp-for="AccionesMejora" class="control-label">Acciones de Mejora</label>
         <textarea asp-for="AccionesMejora" class="form-control"></textarea>
     </div>
+
     <button type="submit" class="btn btn-primary">Actualizar</button>
-    <a asp-action="Index" class="btn btn-secondary">Volver</a>
 </form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

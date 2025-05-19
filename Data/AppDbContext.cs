@@ -28,17 +28,7 @@ namespace FutbolitoManager.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<SprintReview>()
-    .HasOne(r => r.Sprint)
-    .WithMany()
-    .HasForeignKey(r => r.SprintId)
-    .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<SprintRetrospective>()
-                .HasOne(r => r.Sprint)
-                .WithMany()
-                .HasForeignKey(r => r.SprintId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // Relación 1:N Sprint → UserStory
             modelBuilder.Entity<Sprint>()
@@ -76,6 +66,7 @@ namespace FutbolitoManager.Data
                 .WithMany(j => j.PartidoJugadores)
                 .HasForeignKey(pj => pj.JugadorId)
                 .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

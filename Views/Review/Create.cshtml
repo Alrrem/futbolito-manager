@@ -1,27 +1,31 @@
 ﻿@model FutbolitoManager.Models.SprintReview
-@using FutbolitoManager.Models
 
 @{
     ViewBag.Title = "Nueva Sprint Review";
 }
 
-<h2>@ViewBag.Title</h2>
+<h2 class="mb-4">@ViewBag.Title</h2>
 
 <form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
     <div class="mb-3">
         <label asp-for="SprintId" class="form-label">Sprint</label>
         <select asp-for="SprintId" class="form-select" asp-items="ViewBag.Sprints">
             <option value="">-- Seleccione un sprint --</option>
         </select>
     </div>
+
     <div class="mb-3">
         <label asp-for="ComentariosPO" class="form-label">Comentarios del PO</label>
         <textarea asp-for="ComentariosPO" class="form-control"></textarea>
     </div>
+
     <div class="form-check mb-3">
-        <input asp-for="Aprobado" class="form-check-input" type="checkbox" />
+        <input asp-for="Aprobado" class="form-check-input" />
         <label asp-for="Aprobado" class="form-check-label">Aprobado</label>
     </div>
+
     <button type="submit" class="btn btn-success">Guardar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>

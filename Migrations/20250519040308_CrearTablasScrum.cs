@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FutbolitoManager.Migrations
 {
     /// <inheritdoc />
-    public partial class AgregaReviewYRetrospective : Migration
+    public partial class CrearTablasScrum : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

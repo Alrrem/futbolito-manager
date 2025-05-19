@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FutbolitoManager.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250519014644_AgregaReviewYRetrospective")]
-    partial class AgregaReviewYRetrospective
+    [Migration("20250519040308_CrearTablasScrum")]
+    partial class CrearTablasScrum
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
