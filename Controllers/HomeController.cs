@@ -859,10 +859,10 @@ namespace FutbolitoManager.Controllers
             return View(jugador);  // Views/Home/EditarJugador.cshtml
         }
 
-        // POST: guarda los cambios
+        // POST: guarda los cambios (ahora incluyendo goles)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditarJugador(int id, string nombre, string rut, int edad, string posicion)
+        public IActionResult EditarJugador(int id, string nombre, string rut, int edad, string posicion, int goles)
         {
             if (HttpContext.Session.GetString("EsAdmin") != "true")
                 return Forbid();
@@ -872,22 +872,34 @@ namespace FutbolitoManager.Controllers
 
             // Validar duplicados de RUT (salvo él mismo)
             if (_context.Jugadores.Any(j => j.Rut == rut && j.Id != id))
-            {
                 ModelState.AddModelError(nameof(rut), $"Ya existe otro jugador con RUT {rut}.");
-            }
+
+            // Validar rango de edad
             if (edad < 10 || edad > 12)
-            {
                 ModelState.AddModelError(nameof(edad), "La edad debe estar entre 10 y 12 años.");
-            }
+
+            // Validar goles no negativos
+            if (goles < 0)
+                ModelState.AddModelError(nameof(goles), "Los goles no pueden ser negativos.");
+
             if (!ModelState.IsValid)
             {
+                // Para que en la vista aparezcan los valores ingresados
+                jugador.Nombre = nombre;
+                jugador.Rut = rut;
+                jugador.Edad = edad;
+                jugador.Posicion = posicion;
+                jugador.Goles = goles;
                 return View(jugador);
             }
 
+            // Asignar campos al modelo
             jugador.Nombre = nombre;
             jugador.Rut = rut;
             jugador.Edad = edad;
             jugador.Posicion = posicion;
+            jugador.Goles = goles;
+
             _context.SaveChanges();
 
             return RedirectToAction("FichaEquipo", new { id = jugador.EquipoId });

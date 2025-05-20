@@ -1,22 +1,170 @@
-html {
-  font-size: 14px;
+﻿html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
+
+/* Recuadro personalizado */
+.card-custom {
+    border-radius: 0.75rem; /* bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: #e8f5e9; /* verde claro */
+}
+
+/* --- HEADER: tres bloques --- */
+.header-bar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* 1) Logo */
+.app-logo {
+    background: #fff;
+    padding: 0.5rem 1rem;
+}
+
+    .app-logo img {
+        height: 50px;
+        object-fit: contain;
+    }
+
+/* 2) Auspiciadores */
+.header-sponsors {
+    flex: 1;
+    background-color: #004d00; /* verde oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding: 0.5rem 0;
+}
+
+    .header-sponsors img {
+        height: 40px;
+        object-fit: contain;
+    }
+
+/* 3) Login/Logout */
+.login-container {
+    background: #fff;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+    .login-container img {
+        height: 32px;
+        object-fit: contain;
+    }
+
+    .login-container .welcome-text {
+        font-size: 1rem;
+    }
+
+/* Footer con menú Scrum alineado */
+footer.footer .container > .d-flex {
+    /* mantiene justify-content-between del HTML */
+}
+
+footer.footer .nav {
+    margin: 0; /* elimina márgenes extra */
+}
+
+footer.footer .nav-link {
+    color: #333;
+    padding: 0.5rem 1rem;
+}
+
+    footer.footer .nav-link:hover {
+        text-decoration: underline;
+    }
+/* Recuadro interno para secciones (Noticias, Reglamentos, etc.) */
+.section-card {
+    background-color: #fff; /* fondo blanco */
+    border-radius: 0.75rem; /* bordes redondeados */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1); /* sombra suave */
+    padding: 1.5rem; /* espacio interno */
+    margin-bottom: 1.5rem; /* separación inferior */
+    border: 1px solid rgba(0,0,0,0.1); /* línea tenue */
+}
+/* 1)  header con fondo verde y bordes redondeados */
+.header-bar {
+    background-color: #004d00; /* verde oscuro */
+    border-radius: 0.75rem; /* esquinas redondeadas */
+    padding: 0.5rem 1rem; /* espacio interior */
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* 2) Quita el fondo blanco de los bloques de logo y login */
+.app-logo,
+.login-container {
+    background: transparent;
+    padding: 0;
+}
+
+/* 3) Logos de auspiciadores más grandes */
+.header-sponsors img {
+    height: 60px; /* sube tamaño general */
+    object-fit: contain;
+}
+
+    
+
+    
+    /* Aumentar tamaño de los logos white */
+    .header-sponsors img.logo-coca-white {
+        height: 150px;
+    }
+
+    .header-sponsors img.logo-muni-white {
+        height: 100px;
+    }
+    
+    .header-sponsors img.logo-powerade {
+        height: 70px;
+    }
+
+/* Logo de la app con bordes redondeados */
+.app-logo img {
+    height: 80px; /*  el tamaño  */
+    width: auto;
+    border-radius: 0.75rem; /* ajusta el radio */
+}
+/*Texto PATROCINAN*/
+.header-sponsors .sponsor-heading {
+    display: inline-block;
+    font-family: 'Berlin Sans FB Demi', sans-serif;
+    font-size: 1.25rem; /* ajústalo al gusto */
+    font-style: italic;
+    color: #fff; /* texto blanco */
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+    padding: 0.25rem 0.75rem; /* espacio interno */
+    border-radius: 0.5rem; /* esquinas redondeadas */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* sombra suave */
+    margin-right: 1rem;
+}
+

@@ -14,73 +14,98 @@
     <link rel="stylesheet" href="~/FutbolitoManager.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">FutbolitoManager</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <!-- Menú principal: solo para administradores -->
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (esAdmin)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Scrum" asp-action="Index">Pila de Historias</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Scrum" asp-action="Sprints">Sprints</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Daily" asp-action="Index">Scrum Diarios</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Review" asp-action="Index">Revisión de Sprint</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Retrospective" asp-action="Index">Retrospectiva</a>
-                            </li>
-                        }
-                    </ul>
+    <!-- HEADER: logo, sponsors y login -->
+    <header class="header-bar">
+        <!-- Logo de la app -->
+        <div class="app-logo">
+            <a asp-controller="Home" asp-action="Index">
+                <img src="~/imagenes/futbologo.png" alt="FutbolitoManager Logo" />
+            </a>
+        </div>
 
-                    <!-- BLOQUE DE LOGIN / LOGOUT -->
-                    <div class="d-flex align-items-center">
-                        @if (esAdmin && !string.IsNullOrEmpty(adminEmail))
-                        {
-                            <span class="me-2" style="font-size: 1.25rem;">Bienvenido @adminEmail</span>
-                            <form method="post" action="/Home/Logout" class="d-inline">
-                                <button type="submit" class="btn btn-link p-0" title="Cerrar sesión">
-                                    <img src="/imagenes/logout.png" alt="Cerrar sesión" style="width:32px; height:32px;" />
-                                </button>
-                            </form>
-                        }
-                        else
-                        {
-                            <form method="get" action="/Home/Login" class="d-inline">
-                                <button type="submit" class="btn btn-link p-0" title="Iniciar sesión">
-                                    <img src="/imagenes/icono-login.png" alt="Login" style="width:32px; height:32px;" />
-                                </button>
-                            </form>
-                        }
-                    </div>
-                    <!-- FIN BLOQUE LOGIN / LOGOUT -->
-                </div>
-            </div>
-        </nav>
+        <!-- Auspiciadores -->
+        <div class="header-sponsors">
+           <span class="sponsor-heading">PATROCINAN</span>
+  <a href="https://embonor.micoca-cola.cl/" target="_blank">
+    <img 
+      src="~/imagenes/cocacolalogo.png" 
+      alt="Coca-Cola" 
+      class="logo-coca-white" 
+    />
+  </a>
+  <a href="https://muniarica.cl/" target="_blank">
+    <img 
+      src="~/imagenes/logomuni.png" 
+      alt="Municipalidad de Arica" 
+      class="logo-muni-white" 
+    />
+  </a>
+  <a href="https://www.powerade.com/" target="_blank">
+    <img 
+      src="~/imagenes/powerade-logo-header.png" 
+      alt="Powerade" 
+      class="logo-powerade" 
+    />
+  </a>
+</div>
+
+
+        <!-- Login/Logout -->
+        <div class="login-container">
+            @if (esAdmin && !string.IsNullOrEmpty(adminEmail))
+            {
+                <span class="welcome-text">Bienvenido @adminEmail</span>
+                <form method="post" action="/Home/Logout" class="d-inline">
+                    <button type="submit" class="btn btn-link p-0" title="Cerrar sesión">
+                        <img src="~/imagenes/logout.png" alt="Cerrar sesión" />
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form method="get" action="/Home/Login" class="d-inline">
+                    <button type="submit" class="btn btn-link p-0" title="Iniciar sesión">
+                        <img src="~/imagenes/icono-login.png" alt="Login" />
+                    </button>
+                </form>
+            }
+        </div>
     </header>
 
+    <!-- CONTENIDO PRINCIPAL -->
     <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        <div class="card-custom">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
+    <!-- FOOTER: Scrum a la derecha -->
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FutbolitoManager
+        <div class="container d-flex justify-content-between align-items-center py-2">
+            <span>&copy; 2025 - FutbolitoManager</span>
+            <ul class="navbar-nav d-flex flex-row">
+                @if (esAdmin)
+                {
+                    <li class="nav-item mx-2">
+                        <a class="nav-link p-0" asp-controller="Scrum" asp-action="Index">Pila de Historias</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link p-0" asp-controller="Scrum" asp-action="Sprints">Sprints</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link p-0" asp-controller="Daily" asp-action="Index">Scrum Diarios</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link p-0" asp-controller="Review" asp-action="Index">Revisión de Sprint</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link p-0" asp-controller="Retrospective" asp-action="Index">Retrospectiva</a>
+                    </li>
+                }
+            </ul>
         </div>
     </footer>
 
@@ -88,5 +113,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
