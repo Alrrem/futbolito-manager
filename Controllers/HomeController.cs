@@ -379,7 +379,6 @@ namespace FutbolitoManager.Controllers
             return View();
         }
 
-
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
@@ -389,6 +388,7 @@ namespace FutbolitoManager.Controllers
             {
                 HttpContext.Session.SetString("EsAdmin", "true");
                 HttpContext.Session.SetString("AdminEmail", admin.Email);
+                HttpContext.Session.SetString("Rol", admin.Rol); // ← NUEVO: guardar rol en sesión
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -397,12 +397,49 @@ namespace FutbolitoManager.Controllers
                 return View();
             }
         }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("EsAdmin");
             HttpContext.Session.Remove("AdminEmail");
             return RedirectToAction("Index", "Home");
         }
+
+        // GET: /Home/GenerarSaltYHash?password=TU_CLAVE
+        /*[HttpGet]
+        public IActionResult GenerarSaltYHash(string password)
+        {
+            string salt = SecurityHelper.GenerateSalt();
+            string hash = SecurityHelper.HashPassword(password, salt);
+            return Content($"Salt: {salt}\nHash: {hash}");
+        }*/
+
+        // GET: /Home/DebugLogin?email=xxx&password=yyy
+        /* [HttpGet]
+         public IActionResult DebugLogin(string email, string password)
+         {
+             var usuario = _context.Administradores
+                 .FirstOrDefault(a => a.Email.ToLower() == email.Trim().ToLower());
+             if (usuario == null)
+                 return Content($"❌ Usuario '{email}' no encontrado.");
+
+             string stored = usuario.Password;
+             string salt = usuario.Salt;
+             string computed = SecurityHelper.HashPassword(password, salt);
+             bool match = stored == computed;
+
+             string resultado = $@"
+ Email........: {email}
+ Salt.........: {salt}
+ Stored hash..: {stored}
+ Computed hash: {computed}
+ Match?........: {(match ? "✅ Coinciden" : "❌ NO coinciden")}
+ ";
+             return Content(resultado);
+         }
+         */
+
+
 
 
 
@@ -1170,7 +1207,11 @@ namespace FutbolitoManager.Controllers
 
             return Json(jugadores);
         }
+
+
+
     }
+
 
 
 }

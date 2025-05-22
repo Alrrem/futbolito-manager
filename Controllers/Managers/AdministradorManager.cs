@@ -12,8 +12,8 @@ namespace FutbolitoManager.Services
             _context = context;
         }
 
-        // Método para registrar un nuevo administrador (solo para pruebas o futuro)
-        public void RegistrarAdministrador(string correo, string contraseña)
+        // Método para registrar un nuevo administrador (o usuario con rol)
+        public void RegistrarAdministrador(string correo, string contraseña, string rol = "Admin")
         {
             string salt = SecurityHelper.GenerateSalt();
             string hash = SecurityHelper.HashPassword(contraseña, salt);
@@ -22,7 +22,8 @@ namespace FutbolitoManager.Services
             {
                 Email = correo,
                 Password = hash,
-                Salt = salt
+                Salt = salt,
+                Rol = rol // ← nuevo campo agregado
             };
 
             _context.Administradores.Add(admin);

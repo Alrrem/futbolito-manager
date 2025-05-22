@@ -7,5 +7,7 @@
         public string Password { get; set; }
         public string Salt { get; set; } = string.Empty;
 
+        public string Rol { get; set; }
+
     }
 }

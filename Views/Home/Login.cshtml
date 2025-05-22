@@ -5,25 +5,39 @@
 <div style="padding: 50px; max-width: 400px; margin: auto; font-family: Arial;">
     <h2 style="text-align: center;">Acceso administrador</h2>
 
-    <form method="post" action="/Home/Login">
+    <!-- Agregamos autocomplete="off" al form -->
+    <form method="post" action="/Home/Login" autocomplete="off">
         <label>Email:</label>
-        <input type="email" name="email" required style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+        <!-- Forzamos autocomplete="off" y value vacío -->
+        <input type="email"
+               name="email"
+               required
+               autocomplete="off"
+               value=""
+               style="width: 100%; padding: 10px; margin-bottom: 10px;" />
 
         <label>Contraseña:</label>
-        <input type="password" name="password" required style="width: 100%; padding: 10px; margin-bottom: 20px;" />
+        <!-- Usamos new-password para evitar relleno de contraseña -->
+        <input type="password"
+               name="password"
+               required
+               autocomplete="new-password"
+               value=""
+               style="width: 100%; padding: 10px; margin-bottom: 20px;" />
 
-        <button type="submit" style="width: 100%; padding: 12px; background-color: #00796b; color: white; border: none; border-radius: 8px;">
+        <button type="submit"
+                style="width: 100%; padding: 12px; background-color: #00796b; color: white; border: none; border-radius: 8px;">
             Iniciar sesión
         </button>
-    </form>
 
-    @* Mostrar mensaje de error solo si existe *@
-    @if (!string.IsNullOrEmpty(ViewBag.Error as string))
-    {
-        <div class="alert alert-danger" role="alert" style="margin-top: 15px;">
-            @ViewBag.Error
-        </div>
-    }
+        @* Mostrar mensaje de error solo si existe *@
+        @if (!string.IsNullOrEmpty(ViewBag.Error as string))
+        {
+            <div class="alert alert-danger" role="alert" style="margin-top: 15px;">
+                @ViewBag.Error
+            </div>
+        }
+    </form>
 </div>
 
 <div style="text-align: center; margin-top: 20px;">

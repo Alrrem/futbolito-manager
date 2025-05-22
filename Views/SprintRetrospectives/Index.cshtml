@@ -1,38 +1,35 @@
 ﻿@model IEnumerable<FutbolitoManager.Models.SprintRetrospective>
-@using FutbolitoManager.Models
 @using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
     ViewBag.Title = "Sprint Retrospective";
     bool esAdmin = Context.Session.GetString("EsAdmin") == "true";
-    var sprintList = (SelectList)ViewBag.Sprints;
-    int? selected = ViewBag.SelectedSprint as int?;
+    // Si por algún motivo ViewBag.Sprints es null, creamos uno vacío
+    var sprints = ViewBag.Sprints as SelectList 
+                  ?? new SelectList(Enumerable.Empty<SelectListItem>());
 }
 
-<h2 class="mb-4">Sprint Retrospective</h2>
+<h2 class="mb-4">@ViewBag.Title</h2>
 
 @if (esAdmin)
 {
-    <a asp-action="Create" class="btn btn-primary mb-3">Nueva Retrospective</a>
+    <a asp-controller="SprintRetrospectives"
+       asp-action="Create"
+       class="btn btn-primary mb-3">
+        Nueva Retrospective
+    </a>
 }
 
 <form method="get" asp-action="Index" class="mb-3">
     <label class="me-2">Sprint:</label>
-    <select name="sprintId" class="form-select w-auto d-inline-block">
+    <select name="sprintId"
+            class="form-select w-auto d-inline-block"
+            asp-items="sprints">
         <option value="">Todos los Sprints</option>
-        @foreach (var sprint in sprintList)
-        {
-            if (sprint.Value == selected?.ToString())
-            {
-                <option value="@sprint.Value" selected="selected">@sprint.Text</option>
-            }
-            else
-            {
-                <option value="@sprint.Value">@sprint.Text</option>
-            }
-        }
     </select>
-    <button class="btn btn-outline-secondary ms-2">Filtrar</button>
+    <button type="submit" class="btn btn-outline-secondary ms-2">
+        Filtrar
+    </button>
     <a asp-action="Index" class="btn btn-link">Limpiar</a>
 </form>
 
@@ -52,12 +49,17 @@
     {
         <tr>
             <td>@ret.Sprint.Nombre</td>
-            <td>@ret.Fecha.ToString("yyyy-MM-dd")</td>
+            <td>@ret.Fecha:yyyy-MM-dd</td>
             <td>@ret.LoQueFuncionó</td>
             <td>@ret.LoQueNoFuncionó</td>
             <td>@ret.AccionesMejora</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@ret.Id" class="btn btn-sm btn-secondary">Editar</a>
+                <a asp-controller="SprintRetrospectives"
+                   asp-action="Edit"
+                   asp-route-id="@ret.Id"
+                   class="btn btn-sm btn-secondary">
+                    Editar
+                </a>
             </td>
         </tr>
     }
